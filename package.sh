@@ -50,6 +50,12 @@ echo "========================================="
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR" "$DIST_DIR"
 
+# Keep compiler caches inside the project build directory. This also makes the
+# packaging script work in sandboxed build environments.
+export CLANG_MODULE_CACHE_PATH="$BUILD_DIR/ModuleCache"
+export SWIFT_MODULECACHE_PATH="$BUILD_DIR/ModuleCache"
+mkdir -p "$CLANG_MODULE_CACHE_PATH"
+
 # ---- 1. 编译 Swift ----
 step "编译 Swift 源文件 (25 files)..."
 
@@ -157,6 +163,10 @@ ENT
         SIGN_IDENTITY=""
     }
     [[ -n "$SIGN_IDENTITY" ]] && ok "签名完成"
+else
+    step "执行本地 ad-hoc 签名..."
+    codesign --force --deep --sign - "$APP_BUNDLE"
+    ok "ad-hoc 签名完成"
 fi
 
 # ---- 5. 创建 DMG ----
