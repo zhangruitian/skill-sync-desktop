@@ -148,7 +148,7 @@ struct ContentView: View {
             }
 
             VStack(alignment: .leading, spacing: 0) {
-                Text("SkillSyncDesktop")
+                Text("Skill Sync")
                     .font(.system(size: 13, weight: .semibold, design: .default))
                     .foregroundColor(s.Colors.textPrimary)
                 Text("AI Management Tool")
@@ -393,9 +393,6 @@ struct ContentView: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
 
-            // User profile area
-            userProfileArea
-
             // Watch mode indicator
             HStack {
                 Circle()
@@ -407,57 +404,10 @@ struct ContentView: View {
                     .foregroundColor(model.watchEngine.isRunning ? s.Colors.statusSynced : s.Colors.textSecondary)
 
                 Spacer()
-
-                if model.watchEngine.isRunning {
-                    Toggle("", isOn: Binding(
-                        get: { model.watchEngine.isRunning },
-                        set: { isOn in
-                            if isOn { model.startWatching() } else { model.stopWatching() }
-                        }
-                    ))
-                    .toggleStyle(.switch)
-                    .scaleEffect(0.65)
-                    .frame(width: 28)
-                } else {
-                    Circle()
-                        .fill(s.Colors.textSecondary.opacity(0.3))
-                        .frame(width: 6, height: 6)
-                }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 4)
         }
-    }
-
-    // MARK: — User Profile Area
-
-    private var userProfileArea: some View {
-        HStack(spacing: 10) {
-            // Avatar
-            Circle()
-                .fill(s.Colors.primaryContainer.opacity(0.35))
-                .frame(width: 32, height: 32)
-                .overlay(
-                    Text(userInitials)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(s.Colors.primary)
-                )
-
-            // Name + subtitle
-            VStack(alignment: .leading, spacing: 1) {
-                Text(userDisplayName)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(s.Colors.textPrimary)
-                    .lineLimit(1)
-                Text("Administrator")
-                    .font(.system(size: 10))
-                    .foregroundColor(s.Colors.textSecondary)
-            }
-
-            Spacer()
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 6)
     }
 
     // MARK: — Main Content
@@ -548,38 +498,49 @@ struct ContentView: View {
 
             Spacer()
 
-            // Right: notification bell, cloud sync, user avatar
-            HStack(spacing: 14) {
-                // Notification bell
-                Button(action: { selectedTab = "logs" }) {
-                    Image(systemName: "bell")
-                        .font(.system(size: 15))
+            // Right: Watch and Sync All action buttons
+            HStack(spacing: 8) {
+                // Watch button
+                Button(action: {
+                    if model.watchEngine.isRunning {
+                        model.stopWatching()
+                    } else {
+                        model.startWatching()
+                        selectedTab = "logs"
+                    }
+                }) {
+                    HStack(spacing: 5) {
+                        Image(systemName: model.watchEngine.isRunning ? "stop.circle.fill" : "eye.fill")
+                            .font(.system(size: 12))
+                        Text(model.watchEngine.isRunning ? "Stop" : "Watch")
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(model.watchEngine.isRunning ? s.Colors.statusStale : s.Colors.primary)
+                    .cornerRadius(s.Shapes.small)
                 }
                 .buttonStyle(.plain)
-                .foregroundColor(s.Colors.textSecondary)
-                .help("Notifications")
 
-                // Cloud sync status icon
-                Image(systemName: "icloud")
-                    .font(.system(size: 15))
-                    .foregroundColor(s.Colors.textSecondary)
-                    .help("Cloud sync status")
-
-                // User avatar + name
-                HStack(spacing: 8) {
-                    Circle()
-                        .fill(s.Colors.primaryContainer.opacity(0.4))
-                        .frame(width: 26, height: 26)
-                        .overlay(
-                            Text(userInitials)
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundColor(s.Colors.primary)
-                        )
-                    Text(userDisplayName)
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(s.Colors.textPrimary)
-                        .lineLimit(1)
+                // Sync All button
+                Button(action: {
+                    syncPreviewData = model.computeSyncPreview()
+                    showSyncPreview = true
+                }) {
+                    HStack(spacing: 5) {
+                        Image(systemName: "arrow.triangle.swap")
+                            .font(.system(size: 12))
+                        Text("Sync All")
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(s.Colors.actionPrimary)
+                    .cornerRadius(s.Shapes.small)
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, s.Layout.edgeMargin)
@@ -591,19 +552,6 @@ struct ContentView: View {
                 .frame(height: 1),
             alignment: .bottom
         )
-    }
-
-    // MARK: — User Profile Helpers
-
-    private var userDisplayName: String {
-        NSFullUserName()
-    }
-
-    private var userInitials: String {
-        let name = NSFullUserName()
-        let parts = name.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
-        let initials = parts.prefix(2).compactMap { $0.first }.map(String.init).joined()
-        return initials.isEmpty ? "?" : initials.uppercased()
     }
 
     // MARK: — Overview Dashboard
@@ -1338,30 +1286,6 @@ struct ContentView: View {
                         .frame(maxHeight: 150)
                     }
                 }
-            }
-
-            // Notification toggle (live, bound to watch engine state)
-            GlassPanel {
-                HStack(spacing: 16) {
-                    HStack(spacing: 6) {
-                        Image(systemName: model.watchEngine.isRunning ? "bell.badge" : "bell")
-                            .foregroundColor(model.watchEngine.isRunning ? s.Colors.primary : s.Colors.textSecondary)
-                        Text("Auto-sync (Watch)")
-                            .font(s.Typography.bodySM)
-                            .foregroundColor(s.Colors.textSecondary)
-                        Spacer()
-                        Toggle("", isOn: Binding(
-                            get: { model.watchEngine.isRunning },
-                            set: { isOn in
-                                if isOn { model.startWatching() } else { model.stopWatching() }
-                            }
-                        ))
-                            .toggleStyle(.switch)
-                            .scaleEffect(0.7)
-                    }
-                }
-                .padding(.horizontal, s.Layout.componentPadding)
-                .padding(.vertical, 10)
             }
         }
     }

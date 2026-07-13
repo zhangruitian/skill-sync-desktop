@@ -15,7 +15,7 @@ cd "$SCRIPT_DIR"
 
 # ============================== 配置 ======================================
 
-APP_NAME="SkillSyncDesktop"
+APP_NAME="Skill Sync"
 BUNDLE_ID="com.skillsync.desktop"
 VERSION="${VERSION:-1.0.0}"
 BUILD="${BUILD:-$(date +%Y%m%d%H%M)}"

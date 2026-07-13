@@ -2,17 +2,12 @@ import SwiftUI
 
 // MARK: - Settings Page View (inline content, 3-layer tab structure)
 
-/// Settings page with proper 3-layer tab structure matching the Stitch design:
-///   Layer 1: General | Configuration | Network
-///   Layer 2 (within General): Paths & Agents | Sync Rules | Advanced
+/// Settings page with a clean tab structure:
+///   General: Paths & Agents | Sync Rules | Advanced
 struct SettingsPageView: View {
     @ObservedObject var settings: AppSettings
     let onHubChanged: () -> Void
 
-    // Layer 1
-    @State private var topTab: String = "general"
-
-    // Layer 2 (General sub-tabs)
     @State private var generalSubTab: String = "paths"
 
     // Form state
@@ -30,68 +25,8 @@ struct SettingsPageView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Layer 1: Top tab bar
-            topTabBar
-                .padding(.vertical, 8)
-
-            Divider().overlay(ds.Colors.borderSubtle)
-
-            // Content for current top tab
-            switch topTab {
-            case "general":
-                generalTabContent
-
-            case "configuration":
-                configurationTabContent
-
-            case "network":
-                networkTabContent
-
-            default:
-                generalTabContent
-            }
-        }
-    }
-
-    // MARK: — Layer 1: Top Tab Bar
-
-    private var topTabBar: some View {
         HStack(spacing: 0) {
-            topTabButton("General", icon: "gearshape", tag: "general")
-            topTabButton("Configuration", icon: "slider.horizontal.3", tag: "configuration")
-            topTabButton("Network", icon: "network", tag: "network")
-            Spacer()
-        }
-        .padding(.horizontal, 16)
-    }
-
-    private func topTabButton(_ label: String, icon: String, tag: String) -> some View {
-        Button(action: { topTab = tag }) {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.system(size: 12))
-                Text(label)
-                    .font(.system(size: 12, weight: topTab == tag ? .semibold : .regular))
-            }
-            .foregroundColor(topTab == tag ? ds.Colors.primary : ds.Colors.textSecondary)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 7)
-            .background(
-                topTab == tag
-                    ? ds.Colors.primary.opacity(0.1)
-                    : Color.clear
-            )
-            .cornerRadius(ds.Shapes.medium)
-        }
-        .buttonStyle(.plain)
-    }
-
-    // MARK: — General Tab (with Layer 2 sub-tabs)
-
-    private var generalTabContent: some View {
-        HStack(spacing: 0) {
-            // Layer 2: Sub-tab sidebar
+            // Sub-tab sidebar
             VStack(alignment: .leading, spacing: 0) {
                 subTabButton("Paths & Agents", icon: "folder.badge.gearshape", tag: "paths")
                 subTabButton("Sync Rules", icon: "arrow.triangle.swap", tag: "syncRules")
@@ -100,6 +35,7 @@ struct SettingsPageView: View {
             }
             .frame(width: 200)
             .background(ds.Colors.surface.opacity(0.5))
+            .padding(.top, 8)
 
             Divider().overlay(ds.Colors.borderSubtle)
 
@@ -121,6 +57,8 @@ struct SettingsPageView: View {
             }
         }
     }
+
+    // MARK: — Sub-tab Buttons
 
     private func subTabButton(_ label: String, icon: String, tag: String) -> some View {
         Button(action: { generalSubTab = tag }) {
@@ -600,200 +538,6 @@ struct SettingsPageView: View {
                     .foregroundColor(ds.Colors.textSecondary)
                     .lineLimit(nil)
             }
-        }
-    }
-
-    // MARK: — Configuration Tab
-
-    private var configurationTabContent: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                sectionHeader("Sync Configuration")
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Default Install Mode")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(ds.Colors.textPrimary)
-
-                    Picker("", selection: Binding(
-                        get: { settings.defaultInstallMode },
-                        set: { settings.defaultInstallMode = $0 }
-                    )) {
-                        Text("Link (Dev)").tag(InstallMode.link)
-                        Text("Copy (Stable)").tag(InstallMode.copy)
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 200)
-
-                    Text("Link mode creates symlinks — changes in the hub are immediately visible to agents. Copy mode creates independent snapshots.")
-                        .font(.system(size: 11))
-                        .foregroundColor(ds.Colors.textSecondary)
-                }
-
-                Divider().overlay(ds.Colors.borderSubtle).opacity(0.3)
-
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Auto-backup before sync")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(ds.Colors.textPrimary)
-                        Text("Create a zip archive of target directories before applying Hub changes.")
-                            .font(.system(size: 11))
-                            .foregroundColor(ds.Colors.textSecondary)
-                    }
-                    Spacer()
-                    Toggle("", isOn: $settings.autoBackup)
-                        .toggleStyle(.switch)
-                }
-
-                Divider().overlay(ds.Colors.borderSubtle).opacity(0.3)
-
-                sectionHeader("Ignore Patterns")
-                Text("Files and directories matching these glob patterns are excluded during sync.")
-                    .font(.system(size: 11))
-                    .foregroundColor(ds.Colors.textSecondary)
-
-                TextEditor(text: Binding(
-                    get: { settings.ignoreGlobs.joined(separator: "\n") },
-                    set: { newValue in
-                        settings.ignoreGlobs = newValue
-                            .components(separatedBy: "\n")
-                            .map { $0.trimmingCharacters(in: .whitespaces) }
-                            .filter { !$0.isEmpty }
-                    }
-                ))
-                .font(.system(size: 12, design: .monospaced))
-                .foregroundColor(ds.Colors.textPrimary)
-                .frame(height: 120)
-                .padding(8)
-                .background(ds.Colors.surfaceContainer)
-                .cornerRadius(ds.Shapes.medium)
-                .overlay(
-                    RoundedRectangle(cornerRadius: ds.Shapes.medium)
-                        .stroke(ds.Colors.borderSubtle, lineWidth: 1)
-                )
-                .scrollContentBackground(.hidden)
-            }
-            .padding(20)
-        }
-    }
-
-    // MARK: — Network Tab
-
-    private var networkTabContent: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                sectionHeader("Agent Platforms")
-
-                Text("External platform directories that synchronize with the Hub.")
-                    .font(.system(size: 11))
-                    .foregroundColor(ds.Colors.textSecondary)
-
-                VStack(spacing: 0) {
-                    ForEach(Array(settings.agents.enumerated()), id: \.offset) { index, agent in
-                        HStack(spacing: 12) {
-                            Circle()
-                                .fill(agent.exists ? ds.Colors.statusSynced : ds.Colors.outline)
-                                .frame(width: 6, height: 6)
-
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text(agent.label)
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(ds.Colors.textPrimary)
-                                Text(agent.path)
-                                    .font(.system(size: 11, design: .monospaced))
-                                    .foregroundColor(ds.Colors.textSecondary)
-                                    .lineLimit(1)
-                            }
-
-                            Spacer()
-
-                            if agent.exists {
-                                Text("Connected")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(ds.Colors.statusSynced)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(ds.Colors.statusSynced.opacity(0.1))
-                                    .cornerRadius(3)
-                            } else {
-                                Text("Missing")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(ds.Colors.statusStale)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(ds.Colors.statusStale.opacity(0.1))
-                                    .cornerRadius(3)
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-
-                        if index < settings.agents.count - 1 {
-                            Divider()
-                                .overlay(ds.Colors.borderSubtle)
-                                .opacity(0.3)
-                                .padding(.leading, 12)
-                        }
-                    }
-
-                    if settings.agents.isEmpty {
-                        Text("No agents configured")
-                            .font(.system(size: 11))
-                            .foregroundColor(ds.Colors.textSecondary)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 12)
-                    }
-                }
-                .background(ds.Colors.surfaceContainer)
-                .cornerRadius(ds.Shapes.medium)
-
-                Divider().overlay(ds.Colors.borderSubtle).opacity(0.3)
-
-                sectionHeader("Add Agent Platform")
-
-                HStack(spacing: 8) {
-                    TextField("Platform Name", text: $newAgentLabel)
-                        .textFieldStyle(.plain)
-                        .font(.system(size: 12))
-                        .padding(7)
-                        .background(ds.Colors.surfaceContainer)
-                        .cornerRadius(ds.Shapes.small)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: ds.Shapes.small)
-                                .stroke(ds.Colors.borderSubtle, lineWidth: 1)
-                        )
-
-                    TextField("Path", text: $newAgentPath)
-                        .textFieldStyle(.plain)
-                        .font(.system(size: 12, design: .monospaced))
-                        .padding(7)
-                        .background(ds.Colors.surfaceContainer)
-                        .cornerRadius(ds.Shapes.small)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: ds.Shapes.small)
-                                .stroke(ds.Colors.borderSubtle, lineWidth: 1)
-                        )
-
-                    Button("Add") {
-                        let label = newAgentLabel.trimmingCharacters(in: .whitespaces)
-                        let path = newAgentPath.trimmingCharacters(in: .whitespaces)
-                        if !label.isEmpty && !path.isEmpty {
-                            settings.agents.append(AgentConfig(label: label, path: path))
-                            newAgentLabel = ""
-                            newAgentPath = ""
-                        }
-                    }
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 7)
-                    .background(ds.Colors.actionPrimary)
-                    .cornerRadius(ds.Shapes.small)
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(20)
         }
     }
 

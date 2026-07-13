@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "skill-sync-app",
+      "runtimeExecutable": "/Applications/Skill Sync.app/Contents/MacOS/Skill Sync",
+      "runtimeArgs": [],
+      "port": 0
+    }
+  ]
+}

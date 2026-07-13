@@ -19,8 +19,6 @@ struct SyncPreview {
     let totalFix: Int
 }
 
-// MARK: - Skill Sync ViewModel
-
 /// Central view model that coordinates all services and provides data to views.
 @MainActor
 final class SkillSyncViewModel: ObservableObject {
@@ -85,6 +83,13 @@ final class SkillSyncViewModel: ObservableObject {
                 self?.refresh()
             }
         }
+
+        // Forward watch engine isRunning changes so views update
+        watchEngine.$isRunning
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
 
         // Initial load
         loadHistory()
