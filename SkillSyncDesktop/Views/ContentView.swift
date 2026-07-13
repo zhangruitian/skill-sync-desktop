@@ -1410,80 +1410,103 @@ struct ContentView: View {
 
             Divider().overlay(s.Colors.borderSubtle)
 
-            // Summary
+            // Content area — fills available space
             if let preview = syncPreviewData {
-                VStack(spacing: 8) {
-                    HStack(spacing: 20) {
-                        previewStat(color: s.Colors.statusSynced, label: "新增 (Created)", count: preview.totalCreate)
-                        previewStat(color: s.Colors.statusStale, label: "覆盖 (Updated)", count: preview.totalUpdate)
-                        previewStat(color: s.Colors.primary, label: "修正 (Fixing)", count: preview.totalFix)
+                if preview.items.isEmpty {
+                    Spacer()
+                    VStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle")
+                            .font(.system(size: 28))
+                            .foregroundColor(s.Colors.statusSynced)
+                        Text("All skills are already in sync")
+                            .font(s.Typography.bodyMD)
+                            .foregroundColor(s.Colors.textSecondary)
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 12)
-                }
-
-                Divider().overlay(s.Colors.borderSubtle).padding(.horizontal)
-
-                // Items list
-                ScrollView {
+                    Spacer()
+                } else {
                     VStack(spacing: 0) {
-                        ForEach(preview.items) { item in
-                            HStack(spacing: 10) {
-                                Image(systemName: {
-                                    switch item.action {
-                                    case .created: return "plus.circle"
-                                    case .updated: return "arrow.triangle.swap"
-                                    case .fixed: return "wrench"
-                                    default: return "minus"
-                                    }
-                                }())
-                                    .font(.system(size: 12))
-                                    .foregroundColor({
-                                        switch item.action {
-                                        case .created: return s.Colors.statusSynced
-                                        case .updated: return s.Colors.statusStale
-                                        case .fixed: return s.Colors.primary
-                                        default: return s.Colors.textSecondary
-                                        }
-                                    }())
-
-                                Text(item.skillName)
-                                    .font(.system(size: 12, design: .monospaced))
-                                    .foregroundColor(s.Colors.textPrimary)
-                                Text("→")
-                                    .foregroundColor(s.Colors.textSecondary)
-                                Text(item.agentLabel)
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(s.Colors.textPrimary)
-                                Spacer()
-                                Text(item.action.rawValue)
-                                    .font(.system(size: 10, weight: .medium))
-                                    .foregroundColor({
-                                        switch item.action {
-                                        case .created: return s.Colors.statusSynced
-                                        case .updated: return s.Colors.statusStale
-                                        case .fixed: return s.Colors.primary
-                                        default: return s.Colors.textSecondary
-                                        }
-                                    }())
-                                    .padding(.horizontal, 6).padding(.vertical, 2)
-                                    .background(s.Colors.surfaceHigh)
-                                    .cornerRadius(4)
+                        // Summary
+                        VStack(spacing: 8) {
+                            HStack(spacing: 20) {
+                                previewStat(color: s.Colors.statusSynced, label: "新增 (Created)", count: preview.totalCreate)
+                                previewStat(color: s.Colors.statusStale, label: "覆盖 (Updated)", count: preview.totalUpdate)
+                                previewStat(color: s.Colors.primary, label: "修正 (Fixing)", count: preview.totalFix)
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 5)
+                            .padding(.horizontal)
+                            .padding(.top, 12)
+                        }
 
-                            if item.id != preview.items.last?.id {
-                                Divider()
-                                    .overlay(s.Colors.borderSubtle)
-                                    .opacity(0.3)
-                                    .padding(.leading, 12)
+                        Divider().overlay(s.Colors.borderSubtle).padding(.horizontal)
+
+                        // Items list
+                        ScrollView {
+                            VStack(spacing: 0) {
+                                ForEach(preview.items) { item in
+                                    HStack(spacing: 10) {
+                                        Image(systemName: {
+                                            switch item.action {
+                                            case .created: return "plus.circle"
+                                            case .updated: return "arrow.triangle.swap"
+                                            case .fixed: return "wrench"
+                                            default: return "minus"
+                                            }
+                                        }())
+                                            .font(.system(size: 12))
+                                            .foregroundColor({
+                                                switch item.action {
+                                                case .created: return s.Colors.statusSynced
+                                                case .updated: return s.Colors.statusStale
+                                                case .fixed: return s.Colors.primary
+                                                default: return s.Colors.textSecondary
+                                                }
+                                            }())
+
+                                        Text(item.skillName)
+                                            .font(.system(size: 12, design: .monospaced))
+                                            .foregroundColor(s.Colors.textPrimary)
+                                        Text("→")
+                                            .foregroundColor(s.Colors.textSecondary)
+                                        Text(item.agentLabel)
+                                            .font(.system(size: 12, weight: .medium))
+                                            .foregroundColor(s.Colors.textPrimary)
+                                        Spacer()
+                                        Text(item.action.rawValue)
+                                            .font(.system(size: 10, weight: .medium))
+                                            .foregroundColor({
+                                                switch item.action {
+                                                case .created: return s.Colors.statusSynced
+                                                case .updated: return s.Colors.statusStale
+                                                case .fixed: return s.Colors.primary
+                                                default: return s.Colors.textSecondary
+                                                }
+                                            }())
+                                            .padding(.horizontal, 6).padding(.vertical, 2)
+                                            .background(s.Colors.surfaceHigh)
+                                            .cornerRadius(4)
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 5)
+
+                                    if item.id != preview.items.last?.id {
+                                        Divider()
+                                            .overlay(s.Colors.borderSubtle)
+                                            .opacity(0.3)
+                                            .padding(.leading, 12)
+                                    }
+                                }
                             }
                         }
+                        .frame(maxHeight: 350)
                     }
                 }
-                .frame(maxHeight: 350)
+            } else {
+                Spacer()
+                ProgressView()
+                    .progressViewStyle(.circular)
+                Spacer()
             }
+
+            Spacer(minLength: 0)
 
             Divider().overlay(s.Colors.borderSubtle)
 
@@ -1500,11 +1523,13 @@ struct ContentView: View {
                 .buttonStyle(.borderedProminent)
                 .controlSize(.small)
                 .tint(s.Colors.actionPrimary)
+                .disabled(syncPreviewData?.items.isEmpty ?? true)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
         }
-        .frame(width: 580, height: 500)
+        .frame(width: 580)
+        .frame(minHeight: 300, idealHeight: 420, maxHeight: 520)
         .background(s.Colors.background)
         .preferredColorScheme(.dark)
     }
