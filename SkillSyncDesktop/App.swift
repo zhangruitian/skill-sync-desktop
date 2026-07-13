@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct SkillHubDesktopApp: App {
+struct SkillSyncDesktopApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

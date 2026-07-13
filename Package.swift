@@ -2,14 +2,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "SkillHubDesktop",
+    name: "SkillSyncDesktop",
     platforms: [
         .macOS(.v13)
     ],
     targets: [
         .executableTarget(
-            name: "SkillHubDesktop",
-            path: "SkillHubDesktop"
+            name: "SkillSyncDesktop",
+            path: "SkillSyncDesktop"
         )
     ]
 )

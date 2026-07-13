@@ -363,7 +363,7 @@ struct SettingsView: View {
 
             sectionHeader("About")
             VStack(alignment: .leading, spacing: 4) {
-                Text("SkillHubDesktop v1.0").font(ds.Typography.headlineMD).foregroundColor(ds.Colors.textPrimary)
+                Text("SkillSyncDesktop v1.0").font(ds.Typography.headlineMD).foregroundColor(ds.Colors.textPrimary)
                 Text("macOS native desktop application for managing AI agent skills. Sync, diff, and monitor skills across Claude Code, Codex CLI, OpenAI Agents SDK, and custom agent directories.")
                     .font(.system(size: 11)).foregroundColor(ds.Colors.textSecondary).lineLimit(nil)
             }

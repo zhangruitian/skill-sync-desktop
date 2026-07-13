@@ -7,7 +7,7 @@ import SwiftUI
 /// Kept for design reference and SwiftUI preview exploration only;
 /// the live app uses the inline hubSkillsView in ContentView.
 struct StatusView: View {
-    @ObservedObject var model: SkillHubViewModel
+    @ObservedObject var model: SkillSyncViewModel
     let onRefresh: () -> Void
 
     @State private var showDiffForSkill: SkillInfo?

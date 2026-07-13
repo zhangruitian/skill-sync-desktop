@@ -7,13 +7,13 @@
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-APP_NAME="SkillHubDesktop"
-BUNDLE_ID="com.skillhub.desktop"
+APP_NAME="SkillSyncDesktop"
+BUNDLE_ID="com.skillsync.desktop"
 
 cd "$PROJECT_DIR"
 
 echo "========================================="
-echo "  Skill Hub Desktop — Xcode 项目设置"
+echo "  Skill Sync Desktop — Xcode 项目设置"
 echo "========================================="
 echo ""
 
@@ -24,7 +24,7 @@ if command -v xcodegen &>/dev/null; then
     cat > "$PROJECT_DIR/project.yml" <<YML
 name: $APP_NAME
 options:
-  bundleIdPrefix: com.skillhub
+  bundleIdPrefix: com.skillsync
   deploymentTarget:
     macOS: "13.0"
   xcodeVersion: "15.0"
@@ -65,32 +65,32 @@ elif command -v xcodebuild &>/dev/null; then
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-echo "正在编译 Skill Hub Desktop..."
-swiftc -o SkillHubDesktop \
+echo "正在编译 Skill Sync Desktop..."
+swiftc -o SkillSyncDesktop \
     -framework SwiftUI \
     -framework Combine \
     -framework AppKit \
     -target arm64-apple-macos13.0 \
     -sdk $(xcrun --show-sdk-path --sdk macosx) \
-    SkillHubDesktop/App.swift \
-    SkillHubDesktop/SkillHubViewModel.swift \
-    SkillHubDesktop/Models/SyncState.swift \
-    SkillHubDesktop/Models/AgentConfig.swift \
-    SkillHubDesktop/Models/SkillInfo.swift \
-    SkillHubDesktop/Models/AppSettings.swift \
-    SkillHubDesktop/Services/HubManager.swift \
-    SkillHubDesktop/Services/AgentManager.swift \
-    SkillHubDesktop/Services/StatusEngine.swift \
-    SkillHubDesktop/Services/SyncEngine.swift \
-    SkillHubDesktop/Services/DiffEngine.swift \
-    SkillHubDesktop/Services/WatchEngine.swift \
-    SkillHubDesktop/Services/BackupCleaner.swift \
-    SkillHubDesktop/Views/Components/StatusBadge.swift \
-    SkillHubDesktop/Views/Components/SkillRow.swift \
-    SkillHubDesktop/Views/StatusView.swift \
-    SkillHubDesktop/Views/DiffView.swift \
-    SkillHubDesktop/Views/SettingsView.swift \
-    SkillHubDesktop/Views/ContentView.swift \
+    SkillSyncDesktop/App.swift \
+    SkillSyncDesktop/SkillSyncViewModel.swift \
+    SkillSyncDesktop/Models/SyncState.swift \
+    SkillSyncDesktop/Models/AgentConfig.swift \
+    SkillSyncDesktop/Models/SkillInfo.swift \
+    SkillSyncDesktop/Models/AppSettings.swift \
+    SkillSyncDesktop/Services/HubManager.swift \
+    SkillSyncDesktop/Services/AgentManager.swift \
+    SkillSyncDesktop/Services/StatusEngine.swift \
+    SkillSyncDesktop/Services/SyncEngine.swift \
+    SkillSyncDesktop/Services/DiffEngine.swift \
+    SkillSyncDesktop/Services/WatchEngine.swift \
+    SkillSyncDesktop/Services/BackupCleaner.swift \
+    SkillSyncDesktop/Views/Components/StatusBadge.swift \
+    SkillSyncDesktop/Views/Components/SkillRow.swift \
+    SkillSyncDesktop/Views/StatusView.swift \
+    SkillSyncDesktop/Views/DiffView.swift \
+    SkillSyncDesktop/Views/SettingsView.swift \
+    SkillSyncDesktop/Views/ContentView.swift \
     2>&1 || {
     echo ""
     echo "========================================="
@@ -101,7 +101,7 @@ swiftc -o SkillHubDesktop \
     exit 1
 }
 
-echo "✅ 编译完成: ./SkillHubDesktop"
+echo "✅ 编译完成: ./SkillSyncDesktop"
 BUILDSCRIPT
     chmod +x "$PROJECT_DIR/build.sh"
 

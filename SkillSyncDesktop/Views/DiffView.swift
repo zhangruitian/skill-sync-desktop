@@ -6,7 +6,7 @@ import SwiftUI
 /// Implements side-by-side content diff view matching the Stitch design.
 struct DiffView: View {
     let skill: SkillInfo
-    @ObservedObject var model: SkillHubViewModel
+    @ObservedObject var model: SkillSyncViewModel
 
     @State private var selectedAgent: String
     @State private var fileDiffs: [DiffEngine.FileDiff] = []
@@ -16,7 +16,7 @@ struct DiffView: View {
     @Environment(\.dismiss) private var dismiss
     private let ds = DesignSystem.self
 
-    init(skill: SkillInfo, model: SkillHubViewModel) {
+    init(skill: SkillInfo, model: SkillSyncViewModel) {
         self.skill = skill
         self.model = model
         let firstWithState = skill.states.first { $0.value != .notFound && $0.value != .error }

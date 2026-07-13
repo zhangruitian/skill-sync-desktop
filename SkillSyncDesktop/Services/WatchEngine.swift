@@ -20,7 +20,7 @@ final class WatchEngine: ObservableObject {
 
     private var stream: FileSystemEventStream?
     private var debounceTimers: [String: DispatchWorkItem] = [:]
-    private let debounceQueue = DispatchQueue(label: "skillhub.watch.debounce")
+    private let debounceQueue = DispatchQueue(label: "skillsync.watch.debounce")
     private let debounceInterval: TimeInterval = 2.0
 
     init(hubManager: HubManager, agentManager: AgentManager) {

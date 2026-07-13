@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Content View (Terminal Catalyst Design)
 
 struct ContentView: View {
-    @StateObject private var model = SkillHubViewModel()
+    @StateObject private var model = SkillSyncViewModel()
     @State private var selectedSkill: SkillInfo?
     @State private var showCleanAlert = false
     @State private var selectedTab: String = "overview"
@@ -148,7 +148,7 @@ struct ContentView: View {
             }
 
             VStack(alignment: .leading, spacing: 0) {
-                Text("SkillHubDesktop")
+                Text("SkillSyncDesktop")
                     .font(.system(size: 13, weight: .semibold, design: .default))
                     .foregroundColor(s.Colors.textPrimary)
                 Text("AI Management Tool")
@@ -1738,7 +1738,7 @@ struct ContentView: View {
                     Text("Documentation")
                         .font(s.Typography.headlineLG)
                         .foregroundColor(s.Colors.textPrimary)
-                    Text("Learn how to use SkillHub for managing AI agent skills.")
+                    Text("Learn how to use Skill Sync for managing AI agent skills.")
                         .font(s.Typography.bodySM)
                         .foregroundColor(s.Colors.textSecondary)
                 }
@@ -1759,7 +1759,7 @@ struct ContentView: View {
                 docCard(
                     icon: "eye",
                     title: "Watch Mode",
-                    body: "Click \"Watch Sync All\" in the sidebar to monitor the hub directory. When files change, SkillsHub auto-syncs affected skills to all configured agent platforms."
+                    body: "Click \"Watch Sync All\" in the sidebar to monitor the hub directory. When files change, Skill Sync auto-syncs affected skills to all configured agent platforms."
                 )
                 docCard(
                     icon: "arrow.left.arrow.right",
@@ -1981,7 +1981,7 @@ struct StatCard: View {
 // MARK: — Sync Health Ring Card (Card 2: ring chart only)
 
 struct SyncHealthRingCard: View {
-    @ObservedObject var model: SkillHubViewModel
+    @ObservedObject var model: SkillSyncViewModel
     private let s = DesignSystem.self
 
     var body: some View {
@@ -2035,7 +2035,7 @@ struct SyncHealthRingCard: View {
 // MARK: — Status Breakdown Card (Card 3: Synced / Stale / Errors)
 
 struct StatusBreakdownCard: View {
-    @ObservedObject var model: SkillHubViewModel
+    @ObservedObject var model: SkillSyncViewModel
     private let s = DesignSystem.self
 
     var body: some View {
@@ -2091,7 +2091,7 @@ struct StatusBreakdownCard: View {
 // MARK: — Sync Health Card (original, kept for compatibility)
 
 struct SyncHealthCard: View {
-    @ObservedObject var model: SkillHubViewModel
+    @ObservedObject var model: SkillSyncViewModel
     private let s = DesignSystem.self
 
     var body: some View {

@@ -166,7 +166,7 @@ struct SettingsPageView: View {
                     Image(systemName: "folder")
                         .font(.system(size: 11))
                         .foregroundColor(ds.Colors.outline)
-                    TextField("Skill Hub path (e.g. ~/skill-hub)", text: $hubPathInput)
+                    TextField("Skill Sync path (e.g. ~/skill-hub)", text: $hubPathInput)
                         .textFieldStyle(.plain)
                         .font(.system(size: 12, design: .monospaced))
                         .padding(7)
@@ -591,7 +591,7 @@ struct SettingsPageView: View {
             sectionHeader("About")
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("SkillHubDesktop v1.0")
+                Text("SkillSyncDesktop v1.0")
                     .font(ds.Typography.headlineMD)
                     .foregroundColor(ds.Colors.textPrimary)
 

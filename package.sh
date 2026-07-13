@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# package.sh — 将 SkillHubDesktop 打包为可分发的 .dmg 安装包
+# package.sh — 将 SkillSyncDesktop 打包为可分发的 .dmg 安装包
 #
 # 用法:
 #   ./package.sh              # 编译并打包，输出到 dist/
@@ -15,8 +15,8 @@ cd "$SCRIPT_DIR"
 
 # ============================== 配置 ======================================
 
-APP_NAME="SkillHubDesktop"
-BUNDLE_ID="com.skillhub.desktop"
+APP_NAME="SkillSyncDesktop"
+BUNDLE_ID="com.skillsync.desktop"
 VERSION="${VERSION:-1.0.0}"
 BUILD="${BUILD:-$(date +%Y%m%d%H%M)}"
 DIST_DIR="$SCRIPT_DIR/dist"
@@ -43,7 +43,7 @@ warn() { echo "   \033[33m⚠️\033[0m  $*"; }
 # ============================== 构建 ========================================
 
 echo "========================================="
-echo "  SkillHubDesktop — DMG 打包"
+echo "  SkillSyncDesktop — DMG 打包"
 echo "  版本: $VERSION ($BUILD)"
 echo "========================================="
 
@@ -57,31 +57,31 @@ swiftc -parse-as-library \
     -framework SwiftUI -framework Combine -framework AppKit \
     -target arm64-apple-macos13.0 \
     -o "$BUILD_DIR/$APP_NAME" \
-    SkillHubDesktop/App.swift \
-    SkillHubDesktop/SkillHubViewModel.swift \
-    SkillHubDesktop/Models/AppSettings.swift \
-    SkillHubDesktop/Models/AgentConfig.swift \
-    SkillHubDesktop/Models/AppError.swift \
-    SkillHubDesktop/Models/DesignSystem.swift \
-    SkillHubDesktop/Models/HubProfile.swift \
-    SkillHubDesktop/Models/SkillInfo.swift \
-    SkillHubDesktop/Models/SyncState.swift \
-    SkillHubDesktop/Services/AgentManager.swift \
-    SkillHubDesktop/Services/BackupCleaner.swift \
-    SkillHubDesktop/Services/DiffEngine.swift \
-    SkillHubDesktop/Services/HubManager.swift \
-    SkillHubDesktop/Services/StatusEngine.swift \
-    SkillHubDesktop/Services/SyncEngine.swift \
-    SkillHubDesktop/Services/WatchEngine.swift \
-    SkillHubDesktop/Views/ContentView.swift \
-    SkillHubDesktop/Views/DiffView.swift \
-    SkillHubDesktop/Views/SettingsPageView.swift \
-    SkillHubDesktop/Views/SettingsView.swift \
-    SkillHubDesktop/Views/StatusView.swift \
-    SkillHubDesktop/Views/TerminalPageView.swift \
-    SkillHubDesktop/Views/TerminalView.swift \
-    SkillHubDesktop/Views/Components/SkillRow.swift \
-    SkillHubDesktop/Views/Components/StatusBadge.swift \
+    SkillSyncDesktop/App.swift \
+    SkillSyncDesktop/SkillSyncViewModel.swift \
+    SkillSyncDesktop/Models/AppSettings.swift \
+    SkillSyncDesktop/Models/AgentConfig.swift \
+    SkillSyncDesktop/Models/AppError.swift \
+    SkillSyncDesktop/Models/DesignSystem.swift \
+    SkillSyncDesktop/Models/HubProfile.swift \
+    SkillSyncDesktop/Models/SkillInfo.swift \
+    SkillSyncDesktop/Models/SyncState.swift \
+    SkillSyncDesktop/Services/AgentManager.swift \
+    SkillSyncDesktop/Services/BackupCleaner.swift \
+    SkillSyncDesktop/Services/DiffEngine.swift \
+    SkillSyncDesktop/Services/HubManager.swift \
+    SkillSyncDesktop/Services/StatusEngine.swift \
+    SkillSyncDesktop/Services/SyncEngine.swift \
+    SkillSyncDesktop/Services/WatchEngine.swift \
+    SkillSyncDesktop/Views/ContentView.swift \
+    SkillSyncDesktop/Views/DiffView.swift \
+    SkillSyncDesktop/Views/SettingsPageView.swift \
+    SkillSyncDesktop/Views/SettingsView.swift \
+    SkillSyncDesktop/Views/StatusView.swift \
+    SkillSyncDesktop/Views/TerminalPageView.swift \
+    SkillSyncDesktop/Views/TerminalView.swift \
+    SkillSyncDesktop/Views/Components/SkillRow.swift \
+    SkillSyncDesktop/Views/Components/StatusBadge.swift \
     2>&1
 
 ok "编译完成: $BUILD_DIR/$APP_NAME"
@@ -126,9 +126,9 @@ ICON_DIR="$APP_BUNDLE/Contents/Resources"
 if [[ -f "$SCRIPT_DIR/AppIcon.icns" ]]; then
     cp "$SCRIPT_DIR/AppIcon.icns" "$ICON_DIR/AppIcon.icns"
     ok "使用已有 AppIcon.icns"
-elif [[ -f "/tmp/skillhub.icns" ]]; then
-    cp /tmp/skillhub.icns "$ICON_DIR/AppIcon.icns"
-    ok "使用 /tmp/skillhub.icns"
+elif [[ -f "/tmp/skillsync.icns" ]]; then
+    cp /tmp/skillsync.icns "$ICON_DIR/AppIcon.icns"
+    ok "使用 /tmp/skillsync.icns"
 else
     warn "未找到 AppIcon.icns，使用无图标 bundle"
 fi
@@ -139,7 +139,7 @@ ok "App Bundle 创建完成: $APP_BUNDLE"
 if [[ -n "$SIGN_IDENTITY" ]]; then
     step "代码签名 (Identity: $SIGN_IDENTITY)..."
 
-    ENTITLEMENTS="$SCRIPT_DIR/SkillHubDesktop.entitlements"
+    ENTITLEMENTS="$SCRIPT_DIR/SkillSyncDesktop.entitlements"
     if [[ ! -f "$ENTITLEMENTS" ]]; then
         cat > "$ENTITLEMENTS" <<ENT
 <?xml version="1.0" encoding="UTF-8"?>

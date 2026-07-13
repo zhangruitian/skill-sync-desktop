@@ -9,28 +9,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 swiftc -parse-as-library \
     -framework SwiftUI -framework Combine -framework AppKit \
     -target arm64-apple-macos13.0 \
-    -o SkillHubDesktop \
-    SkillHubDesktop/*.swift \
-    SkillHubDesktop/Models/*.swift \
-    SkillHubDesktop/Services/*.swift \
-    SkillHubDesktop/Views/*.swift \
-    SkillHubDesktop/Views/Components/*.swift
+    -o SkillSyncDesktop \
+    SkillSyncDesktop/*.swift \
+    SkillSyncDesktop/Models/*.swift \
+    SkillSyncDesktop/Services/*.swift \
+    SkillSyncDesktop/Views/*.swift \
+    SkillSyncDesktop/Views/Components/*.swift
 ```
 
-To open in Xcode for GUI work, install `xcodegen` (`brew install xcodegen`), run `./setup-xcode.sh`, then `open SkillHubDesktop.xcodeproj`.
+To open in Xcode for GUI work, install `xcodegen` (`brew install xcodegen`), run `./setup-xcode.sh`, then `open SkillSyncDesktop.xcodeproj`.
 
 There are no tests yet — this app was scaffolded from scratch based on [docs/sync-skills.sh](docs/sync-skills.sh) and [docs/README.md](docs/README.md).
 
 ## Architecture
 
-**Pattern**: MVVM with services. `SkillHubViewModel` is the single `@MainActor` coordinator, owning all services and `@Published` state. Views bind to it and never talk to services directly.
+**Pattern**: MVVM with services. `SkillSyncViewModel` is the single `@MainActor` coordinator, owning all services and `@Published` state. Views bind to it and never talk to services directly.
 
 **Data flow**:
 ```
 AppSettings (UserDefaults-backed @Published)
          │
          ▼
-SkillHubViewModel ──owns──▶ HubManager, AgentManager, StatusEngine,
+SkillSyncViewModel ──owns──▶ HubManager, AgentManager, StatusEngine,
                             SyncEngine, DiffEngine, WatchEngine, BackupCleaner
          │
          ▼

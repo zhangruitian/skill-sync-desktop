@@ -19,11 +19,11 @@ struct SyncPreview {
     let totalFix: Int
 }
 
-// MARK: - Skill Hub ViewModel
+// MARK: - Skill Sync ViewModel
 
 /// Central view model that coordinates all services and provides data to views.
 @MainActor
-final class SkillHubViewModel: ObservableObject {
+final class SkillSyncViewModel: ObservableObject {
     // MARK: - Published State
 
     @Published var skills: [SkillInfo] = []

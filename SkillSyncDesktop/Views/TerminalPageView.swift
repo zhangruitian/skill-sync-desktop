@@ -1,15 +1,15 @@
 import SwiftUI
 
-// MARK: - Terminal View
+// MARK: - Terminal Page View (inline content, no modal)
 
-/// Simple terminal/output viewer that runs sync-skills.sh and streams output.
-struct TerminalView: View {
-    @ObservedObject var model: SkillHubViewModel
+/// Copy of TerminalView without the modal Close button and frame constraints,
+/// rendered as inline page content instead of a sheet.
+struct TerminalPageView: View {
+    @ObservedObject var model: SkillSyncViewModel
     @State private var output: String = ""
     @State private var isRunning = false
     @State private var selectedCommand: String = "status"
 
-    @Environment(\.dismiss) private var dismiss
     private let ds = DesignSystem.self
 
     private let commands = [
@@ -32,18 +32,8 @@ struct TerminalView: View {
                     .font(ds.Typography.headlineMD)
                     .foregroundColor(ds.Colors.textPrimary)
                 Spacer()
-                Button("Close") { dismiss() }
-                    .font(.system(size: 11))
-                    .foregroundColor(ds.Colors.textSecondary)
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 8).padding(.vertical, 3)
-                    .background(ds.Colors.surfaceHigh)
-                    .cornerRadius(ds.Shapes.small)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-
-            Divider().overlay(ds.Colors.borderSubtle)
+            .padding(.bottom, 12)
 
             // Command row
             HStack(spacing: 8) {
@@ -88,8 +78,7 @@ struct TerminalView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
             .background(ds.Colors.surfaceContainer)
-
-            Divider().overlay(ds.Colors.borderSubtle)
+            .cornerRadius(ds.Shapes.medium)
 
             // Output area
             ScrollViewReader { proxy in
@@ -120,9 +109,6 @@ struct TerminalView: View {
                 Color.clear.frame(height: 1).id("bottom")
             }
         }
-        .frame(width: 660, height: 440)
-        .background(ds.Colors.background)
-        .preferredColorScheme(.dark)
     }
 
     private func runCommand() {
@@ -185,5 +171,5 @@ struct TerminalView: View {
 // MARK: - Preview
 
 #Preview {
-    TerminalView(model: SkillHubViewModel())
+    TerminalPageView(model: SkillSyncViewModel())
 }
