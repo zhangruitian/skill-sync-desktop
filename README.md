@@ -39,11 +39,15 @@
 
 ### 下载安装（推荐）
 
-从 [Releases](https://github.com/zhangruitian/skill-sync-desktop/releases) 下载最新 DMG。
+从 [Releases](https://github.com/zhangruitian/skill-sync-desktop/releases) 下载最新 DMG。当前本地打包产物会生成在仓库的 `dist/` 目录中，例如 `dist/Skill Sync-1.0.0.dmg`。
 
 1. 打开 `SkillSyncDesktop-1.0.0.dmg`
 2. 将 **Skill Sync Desktop** 拖入 **应用程序** 文件夹
 3. 从启动台打开（如遇 Gatekeeper 提示，右键 → 打开）
+
+> **当前发布状态**：现阶段 Release 包主要由本地打包脚本生成，可能使用 ad-hoc 签名或未经过 Apple 公证。首次打开时，macOS 可能提示“无法验证开发者”或阻止直接启动。请在 Finder 中右键点击应用并选择 **打开**，或在 **系统设置 → 隐私与安全性** 中手动允许。
+>
+> 若后续作为正式产品分发，建议使用 Apple Developer Program 的 **Developer ID Application** 证书进行签名，并完成 Apple notarization（公证）后再上传到 GitHub Release。这样普通用户下载后可以获得更顺滑的首次启动体验。
 
 > **系统要求**：macOS 13.0 及以上（Ventura / Sonoma / Sequoia），Apple Silicon 芯片。
 
@@ -82,6 +86,19 @@ open SkillSyncDesktop.xcodeproj
 ./package.sh                    # 编译 + 生成 .dmg
 ./package.sh --sign "证书名称"   # 代码签名
 ```
+
+当前 `package.sh` 适合本地测试和早期 Release 分发：未传入 `--sign` 时会执行本地 ad-hoc 签名；传入 `--sign` 时可使用本机钥匙串中的签名证书。打包完成后，DMG 会输出到 `dist/` 目录，可将该文件作为 GitHub Release 的下载附件。
+
+正式公开分发到 GitHub Release 时，推荐流程是：
+
+1. 使用 Release 配置构建 `.app`
+2. 使用 `Developer ID Application` 证书签名，并开启 hardened runtime
+3. 将 `.app` 打包为 `.dmg`
+4. 对 `.dmg` 提交 Apple notarization（公证）
+5. 公证通过后执行 `xcrun stapler staple`
+6. 生成 `.sha256` 校验文件，并将 `.dmg` 与 `.sha256` 一起上传到 GitHub Release
+
+Developer ID 签名和 Apple 公证通常需要有效的 Apple Developer Program 会员资格。没有付费开发者账号时仍可生成 DMG，但用户首次打开时可能需要手动绕过 Gatekeeper。
 
 ---
 
